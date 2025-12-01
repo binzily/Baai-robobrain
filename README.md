@@ -35,13 +35,6 @@ cd LLaMA-Factory
 pip install -e ".[torch,metrics]"
 #如有问题，可参照LLaMA-Factory源码安装环境, 源码链接：https://github.com/hiyouga/LLaMA-Factory/blob/main/README_zh.md?plain=1#L471
 
-#安装Qwen2.5-VL
-git clone https://github.com/QwenLM/Qwen2.5-VL.git
-cd Qwen2.5-VL
-pip install qwen-vl-utils[decord]
-pip install transformers
-pip install 'accelerate>=0.26.0'
-#如有问题，可参照Qwen2.5-VL源码安装环境，源码链接：https://github.com/QwenLM/Qwen2.5-VL
 
 
 #下面是从魔搭社区拉取RoboBrain2.0-7B模型，如有问题，可参照魔搭社区模型下载文档, 链接：https://modelscope.cn/docs/models/download
@@ -78,23 +71,6 @@ A相关度：计算原始数据的instruction + input字段和output字段之间
 - 在本次决赛中，浅试团队基于RoboBrain2.0-7B模型，结合RoboBrain-1.0和Qwen3-VL的训练框架，在14天的周期内实现了SFT(+结构化CoT) → DPO的轻量闭环训练，并在空间理解、场景理解、基础空间和数量理解等指标上取得了显著的提升。通过基于Ego4D、EPIC-KITCHENS、LVIS等数据集，本次训练重点突破了7B⻓链规划、结构化思维链和偏好对⻬等瓶颈。
 
 
-### 方法的创新点
-
-#### **核心创新点与技术突破**
-
-##### 1. 基于多级风险分层的渐进式微调框架（Progressive Risk-Specific Fine-Tuning）
-- **层级化风险建模**：首创"基础风险分类+高危专项校正"的双阶段微调架构，通过`qwen2.5-vl-7b-sft`实现全风险谱系粗粒度识别后，采用`qwen2.5-vl-3b-sft-high-risk`进行高危场景精准校准，错误率较传统单模型方案降低20-30%
-- **动态特征解耦**：针对高危类别特有的视觉特征（如特定空间布局、危险物品组合），在第二阶段模型中专设高危特征增强层（High-Risk Feature Amplifier Module）
-
-##### 2. 面向视觉-语言模型的对抗性数据增强方案（VL-ADAS）
-  - **多模态联合增强策略**：在传统图像变换（大尺度缩放/随机旋转）基础上，创新性引入：
-  - **语义一致性颜色扰动**（Semantic-Consistent Color Jitter）：保持危险标识色相不变条件下的HSV空间扰动
-  - **上下文感知随机Pad**（Context-Aware Padding）：根据图像语义内容智能选择填充模式（边缘复制/反射/危险标识植入）
-  - **跨模态增强验证**：通过对增强后的图像-标签对进行语义一致性评分，过滤增强噪声样本
-
-##### 3. 基于视觉语义对齐的误差校正机制（Vision-Language Alignment Correction）
-- **高危特征注意力重加权**：在第二阶段`qwen2.5-vl-3b-sft-high-risk模型中采用
-- **双模型置信度融合**：最终预测结果 = 基础模型置信度 × 高危模型校正系数
 
 
 ## 训练流程
